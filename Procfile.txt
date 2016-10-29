@@ -1,1 +1,0 @@
-web: python F:\MusicBot-master\musicbot\bot.py
