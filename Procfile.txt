@@ -1,1 +1,1 @@
-worker: python bot.py
+worker: python F:\MusicBot-master\musicbot\bot.py
