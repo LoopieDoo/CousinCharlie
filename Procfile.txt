@@ -1,1 +1,1 @@
-worker: python F:\MusicBot-master\musicbot\bot.py
+web: python F:\MusicBot-master\musicbot\bot.py
