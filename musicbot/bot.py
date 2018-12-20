@@ -1223,7 +1223,8 @@ class MusicBot(discord.Client):
 
         return Response("Oh well :frowning:", delete_after=30)
 
-    async def cmd_np(self, player, channel, server, message):
+
+    async def cmd_link(self, player, channel, server, message):
         """
         Usage:
             {command_prefix}np
@@ -1241,10 +1242,9 @@ class MusicBot(discord.Client):
             prog_str = '`[%s/%s]`' % (song_progress, song_total)
 
             if player.current_entry.meta.get('channel', False) and player.current_entry.meta.get('author', False):
-                np_text = "Mirdza sucks: **%s** added by **%s** %s\n" % (
-                    player.current_entry.title, player.current_entry.meta['author'].name, prog_str)
+                np_text = "Playing: **%s** added by **%s** %s\n" % (player.current_entry.url, player.current_entry.meta['author'].name, prog_str)
             else:
-                np_text = "Mirdza sucks: **%s** %s\n" % (player.current_entry.title, prog_str)
+                np_text = "Else: **%s** %s\n" % (player.current_entry.title, prog_str)
 
             self.server_specific_data[server]['last_np_msg'] = await self.safe_send_message(channel, np_text)
             await self._manual_delete_check(message)
@@ -1309,7 +1309,6 @@ class MusicBot(discord.Client):
         else:
             raise exceptions.CommandError('Player is not playing.', expire_in=30)
 
-
     async def cmd_resume(self, player):
         """
         Usage:
@@ -1324,7 +1323,27 @@ class MusicBot(discord.Client):
         else:
             raise exceptions.CommandError('Player is not paused.', expire_in=30)
 
-    async def cmd_shuffle(self, channel, player):
+    async def cmd_rps(client, channel, player, voice_channel):
+            voice = await client.join_voice_channel(voice_channel)
+            player = await voice.create_ytdl_player('https://www.youtube.com/watch?v=y9-zTh-_FIU')
+            player.start()
+
+    async def cmd_gachi(self, channel, player):
+        player.playlist.shuffle()
+        cards = ['<:gachiGASM:230363165479796736>', '<:Kappa:230369380200873984>']
+        hand = await self.send_message(channel, ' '.join(cards))
+        return Response("Charlie,play bockey mouse march")
+        await asyncio.sleep(0.1)
+
+        for x in range(100):
+            shuffle(cards)
+            await self.safe_edit_message(hand, ' '.join(cards))
+            await asyncio.sleep(0.1)
+
+        await self.safe_delete_message(hand, quiet=True)
+        return Response(":ok_hand:", delete_after=15)
+
+    async def cmd_gays(self, channel, player):
         """
         Usage:
             {command_prefix}shuffle
@@ -1334,14 +1353,14 @@ class MusicBot(discord.Client):
 
         player.playlist.shuffle()
 
-        cards = [':spades:',':clubs:',':hearts:',':diamonds:']
+        cards = ['<:dusky:230338229247672320>','<:MirdzaRage:235118885228118026>','<:gachiGASM:230363165479796736>','<:HirmanPls:231900622931230720>']
         hand = await self.send_message(channel, ' '.join(cards))
-        await asyncio.sleep(0.6)
+        await asyncio.sleep(0.3)
 
-        for x in range(4):
+        for x in range(100):
             shuffle(cards)
             await self.safe_edit_message(hand, ' '.join(cards))
-            await asyncio.sleep(0.6)
+            await asyncio.sleep(0.3)
 
         await self.safe_delete_message(hand, quiet=True)
         return Response(":ok_hand:", delete_after=15)
@@ -1358,8 +1377,112 @@ class MusicBot(discord.Client):
 
         player.playlist.clear()
         return Response(':put_litter_in_its_place:', delete_after=20)
+
+
+
     async def cmd_suhdude(self):
-            return Response("Charlie,play https://www.youtube.com/watch?v=pIHYPaoh79I")
+            return Response("!play https://www.youtube.com/watch?v=pIHYPaoh79I")
+
+    async def cmd_rating(self, channel, message):
+            idWooph = '124562283358715904'
+            idDavid = '180748611556999168'
+            idAdi = '175578898585616384'
+            idRola = '174952788537638912'
+            idNihtmer = '252518039151575040'
+            idLoopie = '195878798091091968'
+            idDusky = '195879263885328384'
+            idAXH = '185378556296167424'
+
+            players = ['Wooph', 'David', 'Adi', 'Rola', 'Nihtmer', 'Loopie', 'Dusky', 'AXH']
+            ratingindex = []
+            df = pd.read_csv(
+                "https://docs.google.com/spreadsheets/d/1mcjdHxQ01XrIa8WT_l0PnndwX45S-6qyN7VZ65gUK70/pub?gid=0&single=true&output=csv")
+
+            for i in range(0, 8):
+                ratingindex.append((df["Rating Index"][i]))
+
+            newdf = pd.DataFrame({
+                'Name': players,
+                'Score': ratingindex})
+
+            newdf = newdf.sort_values(['Score', 'Name'], ascending=[0, 1])
+
+            newdf = newdf.reset_index(drop=True)
+            if message.author.id == idWooph:
+                em = discord.Embed(title='', description=str(ratingindex[0]), colour=0x109856)
+                em.set_author(name='Wooph', icon_url=message.author.avatar_url)
+                em.set_footer(text='Alive eSports RO Rating System')
+            elif message.author.id == idDavid:
+                em = discord.Embed(title='', description=str(ratingindex[1]), colour=0xFF8901)
+                em.set_author(name='David', icon_url=message.author.avatar_url)
+                em.set_footer(text='Alive eSports RO Rating System')
+            elif message.author.id == idAdi:
+                em = discord.Embed(title='', description=str(ratingindex[2]), colour=0xFFFC01)
+                em.set_author(name='Adi', icon_url=message.author.avatar_url)
+                em.set_footer(text='Alive eSports RO Rating System')
+            elif message.author.id == idRola:
+                em = discord.Embed(title='', description=str(ratingindex[3]), colour=0xCC3333)
+                em.set_author(name='Rola', icon_url=message.author.avatar_url)
+                em.set_footer(text='Alive eSports RO Rating System')
+            elif message.author.id == idNihtmer:
+                em = discord.Embed(title='', description=str(ratingindex[4]), colour=0x68A3E5)
+                em.set_author(name='Nihtmer', icon_url=message.author.avatar_url)
+                em.set_footer(text='Alive eSports RO Rating System')
+            elif message.author.id == idLoopie:
+                em = discord.Embed(title='', description=str(ratingindex[5]), colour=0x803CA1)
+                em.set_author(name='Loopie', icon_url=message.author.avatar_url)
+                em.set_footer(text='Alive eSports RO Rating System')
+            elif message.author.id == idDusky:
+                em = discord.Embed(title='', description=str(ratingindex[6]), colour=0xCC66CC)
+                em.set_author(name='Dusky', icon_url=message.author.avatar_url)
+                em.set_footer(text='Alive eSports RO Rating System')
+            elif message.author.id == idAXH:
+                em = discord.Embed(title='', description=str(ratingindex[7]), colour=0x999999)
+                em.set_author(name='AXH', icon_url=message.author.avatar_url)
+                em.set_footer(text='Alive eSports RO Rating System')
+            else:
+                await self.send_message(channel, "Unknown player.")
+            await self.send_message(channel, embed=em)
+
+    async def cmd_leaderboard(self, channel, message):
+            players = ['Wooph', 'David', 'Adi', 'Rola', 'Nihtmer', 'Loopie', 'Dusky', 'AXH']
+            ratingindex = []
+            df = pd.read_csv(
+                "https://docs.google.com/spreadsheets/d/1mcjdHxQ01XrIa8WT_l0PnndwX45S-6qyN7VZ65gUK70/pub?gid=0&single=true&output=csv")
+
+            for i in range(0, 8):
+                ratingindex.append((df["Rating Index"][i]))
+
+            newdf = pd.DataFrame({
+                'Name': players,
+                'Score': ratingindex})
+
+            newdf = newdf.reindex_axis(['Name', 'Score'], axis=1)
+
+            newdf = newdf.sort_values(['Score', 'Name'], ascending=[0, 1])
+
+            newdf = newdf.reset_index(drop=True)
+
+            em = discord.Embed(title=' ', description='Leaderboard', colour=0x999999)
+            # em.set_author(name='')
+
+            for i in range(0,8):
+                em.add_field(name=newdf['Name'][i], value=newdf['Score'][i], inline=False)
+
+            await self.send_message(channel, embed=em)
+
+    async def cmd_sendlol(self, message):
+            serverid = self.get_server('195878960297541632')
+            for member in serverid.members:
+                if member.id == '195879263885328384':
+                        await self.send_message(member, "Last night me and my mates went to the pub")
+                        time.sleep(3)
+                        await self.send_message(member, "Got us a few pints")
+                        time.sleep(3)
+                        await self.send_message(member, "Turns out one of the girls I shagged")
+                        time.sleep(3)
+                        await self.send_message(member, "Happend to be yo mom")
+
 
     async def cmd_halloffame(self):
             quotes = ["*xd* - SoftMandar 2013", "*5 lei* - Softmandar 2013", "*zboara in gard si mor* - Loopie 2016", "*ba astia fac baronu* - Nihtmer 2016", "*sterge-ma*",
@@ -1783,9 +1906,7 @@ class MusicBot(discord.Client):
         await self.disconnect_voice_client(server)
         await self.send_file(channel, 'F:\MusicBot-master\musicbot\giphy.gif')
 
-    async def cmd_rps(self, channel):
-        logs = self.logs_from(channel)
-        return Response(logs)
+
 
 
     async def cmd_restart(self, channel):

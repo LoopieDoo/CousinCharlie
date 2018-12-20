@@ -103,7 +103,7 @@ class PIP(object):
 
 
 def main():
-    if not sys.version_info >= (3, 5):
+    if not sys.version_info >= (3, 6, 7):
         print("Python 3.5+ is required. This version is %s" % sys.version.split()[0])
         print("Attempting to locate python 3.5...")
 
@@ -113,8 +113,8 @@ def main():
 
         if sys.platform.startswith('win'):
             try:
-                subprocess.check_output('py -3.5 -c "exit()"', shell=True)
-                pycom = 'py -3.5'
+                subprocess.check_output('py -3.6.7 -c "exit()"', shell=True)
+                pycom = 'py -3.6.7'
             except:
 
                 try:
